@@ -1,5 +1,19 @@
 <template>
-  <div class="loteria-container w-full flex flex-col gap-50 items-center">
+  <div class="loteria-container w-full flex flex-col gap-10 items-center">
+    <!-- Controls section -->
+    <div class="mt-2 flex gap-3">
+      <button @click="drawCard"
+        class="px-8 pt-[12px] pb-[14px] bg-[#ff6842] text-[#ffffff] text-primary-foreground rounded-md hover:bg-[#ff6842]/90 disabled:opacity-50 disabled:cursor-not-allowed text-2xl"
+        :disabled="remainingCards === 0 || isDrawing">
+        Draw Card
+      </button>
+
+      <button @click="resetDeck"
+        class="px-8 pt-[12px] pb-[14px] bg-[#ffb300] text-secondary-foreground rounded-md hover:bg-[#ffb300]/90 text-2xl"
+        :disabled="isDrawing">
+        Reset Deck
+      </button>
+    </div>
 
     <div class="flex flex-col md:flex-row gap-8 w-full">
       <!-- Deck section -->
@@ -14,11 +28,14 @@
       <!-- Drawn cards section -->
       <div class="drawn-cards-section">
         <div v-if="drawnCards.length !== 0" class="drawn-cards">
-          <transition-group name="card-enter">
+          <transition-group name="card-fall">
             <div v-for="(card, index) in drawnCards" :key="card.id" class="card card-front" :style="{
               top: `${index * 3}px`,
               left: `${index * 1}px`,
-              zIndex: drawnCards.length - index
+              zIndex: drawnCards.length - index,
+              '--fall-x-offset': `${card.animOffsetX}px`,
+              '--fall-y-offset': `${card.animOffsetY}px`,
+              '--fall-rotation': `${card.animRotation}deg`
             }">
               <img :src="card.image" :alt="card.name" class="card-image" />
               <div class="card-name">{{ card.name }}</div>
@@ -28,20 +45,6 @@
       </div>
     </div>
 
-    <!-- Controls section -->
-    <div class="mt-4 flex gap-3">
-      <button @click="drawCard"
-        class="px-8 pt-[12px] pb-[14px] bg-[#ff6842] text-[#ffffff] text-primary-foreground rounded-md hover:bg-[#ff6842]/90 disabled:opacity-50 disabled:cursor-not-allowed text-2xl"
-        :disabled="remainingCards === 0 || isDrawing">
-        Draw Card
-      </button>
-
-      <button @click="resetDeck"
-        class="px-8 pt-[12px] pb-[14px] bg-[#ffb300] text-secondary-foreground rounded-md hover:bg-[#ffb300]/90 text-2xl"
-        :disabled="isDrawing">
-        Reset Deck
-      </button>
-    </div>
   </div>
 </template>
 
@@ -105,6 +108,15 @@ const shuffleDeck = (deck) => {
   return shuffled;
 };
 
+// Generate random animation values within a reasonable range
+const generateRandomAnimValues = () => {
+  return {
+    animOffsetX: Math.floor(Math.random() * 21) - 10, // -10 to 10px
+    animOffsetY: -40 - Math.floor(Math.random() * 20), // -40 to -60px
+    animRotation: Math.floor(Math.random() * 9) - 4, // -4 to 4 degrees
+  };
+};
+
 // State
 const deck = ref([]);
 const drawnCards = ref([]);
@@ -124,15 +136,23 @@ const drawCard = () => {
   if (deck.value.length > 0 && !isDrawing.value) {
     isDrawing.value = true;
     
-    // Add a delay to allow the animation to complete
+    // Add a delay to allow the card-leave animation to complete
     setTimeout(() => {
       const card = deck.value.pop();
-      drawnCards.value.unshift(card); // Add to the beginning to show newest first
+      
+      // Add random animation values and timestamp to make each card unique
+      const newCard = { 
+        ...card, 
+        _timestamp: Date.now(),
+        ...generateRandomAnimValues()
+      };
+      
+      drawnCards.value.unshift(newCard); // Add to the beginning to show newest first
       
       // Reset the drawing state after the card has been added to drawn cards
       setTimeout(() => {
         isDrawing.value = false;
-      }, 300);
+      }, 500); // Match the animation duration
     }, 500); // This delay should match the card-drawing animation duration
   }
 };
@@ -153,7 +173,6 @@ onMounted(() => {
 .loteria-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .deck-section,
@@ -306,19 +325,39 @@ onMounted(() => {
   transition: all 0.3s ease;
 }
 
-/* Transition for cards entering the drawn cards section */
-.card-enter-active {
-  transition: all 0.5s ease;
+/* Randomized card falling animation using CSS variables */
+.card-fall-enter-active {
+  animation: card-falling 0.5s ease-out;
 }
 
-.card-enter-from {
+@keyframes card-falling {
+  0% {
+    transform: translateX(var(--fall-x-offset, 0)) translateY(var(--fall-y-offset, -50px)) rotate(var(--fall-rotation, 2deg));
+    opacity: 0;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  70% {
+    transform: translateY(5px) rotate(calc(var(--fall-rotation, 2deg) * -0.5));
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.card-fall-leave-active {
+  transition: all 0.3s ease;
+  position: absolute;
+}
+
+.card-fall-leave-to {
   opacity: 0;
-  transform: translateX(-100%) translateY(-50px) rotate(-10deg);
+  transform: translateY(30px);
 }
 
-.card-enter-to {
-  opacity: 1;
-  transform: translateX(0) translateY(0) rotate(0deg);
+.card-fall-move {
+  transition: all 0.5s ease;
 }
 
 .no-cards-message {

@@ -1,5 +1,5 @@
 <template>
-  <div class="loteria-container w-full flex flex-col gap-20 items-center justify-center pl-30">
+  <div class="loteria-container w-full flex flex-col gap-20 items-center pl-30">
     <!-- Controls section -->
     <!-- <div class="mt-2 flex gap-3">
       <button @click="drawCard"

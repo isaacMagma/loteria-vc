@@ -1,7 +1,7 @@
 <template>
   <div class="loteria-container w-full flex flex-col gap-20 items-center pl-30">
     <!-- Controls section -->
-    <div class="mt-2 flex gap-3">
+    <!-- <div class="mt-2 flex gap-3">
       <button @click="drawCard"
         class="px-8 pt-[12px] pb-[14px] bg-[#ff6842] text-[#ffffff] text-primary-foreground rounded-md hover:bg-[#ff6842]/90 disabled:opacity-50 disabled:cursor-not-allowed text-2xl"
         :disabled="remainingCards === 0 || isDrawing">
@@ -13,7 +13,7 @@
         :disabled="isDrawing">
         Reset Deck
       </button>
-    </div>
+    </div> -->
 
     <div class="flex flex-col md:flex-row gap-8 w-full">
       <!-- Deck section -->

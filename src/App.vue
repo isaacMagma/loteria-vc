@@ -22,7 +22,7 @@
       <!-- Deck section -->
       <div class="deck-section">
         <div v-if="remainingCards > 0" @click="drawCard" class="deck" :class="{ 'empty': remainingCards === 0 }" :style="{ '--remaining-cards': remainingCards }">
-          <div class="card card-back">
+          <div class="card card-back cursor-pointer">
             <div v-if="isDrawing" class="card card-back card-drawing"></div>
           </div>
         </div>

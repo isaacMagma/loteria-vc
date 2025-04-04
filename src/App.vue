@@ -1,5 +1,5 @@
 <template>
-  <div class="loteria-container w-full flex flex-col gap-10 items-center">
+  <div class="loteria-container w-full flex flex-col gap-20 items-center pl-30">
     <!-- Controls section -->
     <div class="mt-2 flex gap-3">
       <button @click="drawCard"
@@ -18,7 +18,7 @@
     <div class="flex flex-col md:flex-row gap-8 w-full">
       <!-- Deck section -->
       <div class="deck-section">
-        <div v-if="remainingCards > 0" class="deck" :class="{ 'empty': remainingCards === 0 }" :style="{ '--remaining-cards': remainingCards }">
+        <div v-if="remainingCards > 0" @click="drawCard" class="deck" :class="{ 'empty': remainingCards === 0 }" :style="{ '--remaining-cards': remainingCards }">
           <div class="card card-back">
             <div v-if="isDrawing" class="card card-back card-drawing"></div>
           </div>
@@ -27,7 +27,7 @@
 
       <!-- Drawn cards section -->
       <div class="drawn-cards-section">
-        <div v-if="drawnCards.length !== 0" class="drawn-cards">
+        <div v-if="drawnCards.length !== 0" class="drawn-cards" @click="resetDeck">
           <transition-group name="card-fall">
             <div v-for="(card, index) in drawnCards" :key="card.id" class="card card-front" :style="{
               top: `${index * 3}px`,

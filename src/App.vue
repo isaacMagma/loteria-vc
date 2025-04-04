@@ -1,5 +1,5 @@
 <template>
-  <div class="loteria-container w-full flex flex-col gap-20 items-center pl-30">
+  <div class="loteria-container w-full flex flex-col gap-20 items-center justify-center pl-30">
     <!-- Controls section -->
     <!-- <div class="mt-2 flex gap-3">
       <button @click="drawCard"
@@ -14,6 +14,9 @@
         Reset Deck
       </button>
     </div> -->
+    <button @click="resetDeck" class="px-8 pt-[12px] pb-[14px] bg-white/80 hover:bg-white/90 text-black text-2xl flex items-center justify-center rounded-md hover:bg-[#f5f5f5]">
+      <RotateCw size="24" />
+    </button>
 
     <div class="flex flex-col md:flex-row gap-8 w-full">
       <!-- Deck section -->
@@ -27,7 +30,7 @@
 
       <!-- Drawn cards section -->
       <div class="drawn-cards-section">
-        <div v-if="drawnCards.length !== 0" class="drawn-cards" @click="resetDeck">
+        <div v-if="drawnCards.length !== 0" class="drawn-cards">
           <transition-group name="card-fall">
             <div v-for="(card, index) in drawnCards" :key="card.id" class="card card-front" :style="{
               top: `${index * 3}px`,
@@ -50,50 +53,51 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { RotateCw } from 'lucide-vue-next';
 
 // Create the lotería cards
 const createDeck = () => {
   const cards = [
-    { id: 1, name: "mvp", image: "/cards/01-mvp.png" },
-    { id: 2, name: "pivot", image: "/cards/02-pivot.png" },
-    { id: 3, name: "burnrate", image: "/cards/03-burnrate.png" },
-    { id: 4, name: "angel-r", image: "/cards/04-angel-r.png" },
-    { id: 5, name: "seed-round", image: "/cards/05-seed-round.png" },
-    { id: 6, name: "pitch", image: "/cards/06-pitch.png" },
-    { id: 7, name: "unicorn", image: "/cards/07-unicorn.png" },
-    { id: 8, name: "founder", image: "/cards/08-founder.png" },
-    { id: 9, name: "due-diligence", image: "/cards/09-due-diligence.png" },
-    { id: 10, name: "valuation", image: "/cards/10-valuation.png" },
-    { id: 11, name: "exit", image: "/cards/11-exit.png" },
-    { id: 12, name: "pitch-deck", image: "/cards/12-pitch-deck.png" },
-    { id: 13, name: "venture-partner", image: "/cards/13-venture-partner.png" },
-    { id: 14, name: "accelerator", image: "/cards/14-accelerator.png" },
-    { id: 15, name: "bootstrapped", image: "/cards/15-bootstrapped.png" },
-    { id: 16, name: "elevator-pitch", image: "/cards/16-elevator-pitch.png" },
-    { id: 17, name: "network", image: "/cards/17-network.png" },
-    { id: 18, name: "ipo", image: "/cards/18-ipo.png" },
-    { id: 19, name: "cto", image: "/cards/19-cto.png" },
-    { id: 20, name: "ceo", image: "/cards/20-ceo.png" },
-    { id: 21, name: "cfo", image: "/cards/21-cfo.png" },
-    { id: 22, name: "ecosistema", image: "/cards/22-ecosistema.png" },
-    { id: 23, name: "captable", image: "/cards/23-captable.png" },
-    { id: 24, name: "limited-partner", image: "/cards/24-limited-partner.png" },
-    { id: 25, name: "value-prop", image: "/cards/25-value-prop.png" },
-    { id: 26, name: "tam", image: "/cards/26-tam.png" },
-    { id: 27, name: "aquihire", image: "/cards/27-aquihire.png" },
-    { id: 28, name: "dpi", image: "/cards/28-dpi.png" },
-    { id: 29, name: "mentor", image: "/cards/29-mentor.png" },
-    { id: 30, name: "runway", image: "/cards/30-runway.png" },
-    { id: 31, name: "moonshot", image: "/cards/31-moonshot.png" },
-    { id: 32, name: "hockey-stick", image: "/cards/32-hockey-stick.png" },
-    { id: 33, name: "bubble", image: "/cards/33-bubble.png" },
-    { id: 34, name: "AI", image: "/cards/34-AI.png" },
-    { id: 35, name: "blockchain", image: "/cards/35-blockchain.png" },
-    { id: 36, name: "pay2play", image: "/cards/36-pay2play-.png" },
-    { id: 37, name: "term-sheet", image: "/cards/37-term-sheet.png" },
-    { id: 38, name: "safe-note", image: "/cards/38-safe-note.png" },
-    { id: 39, name: "dilution", image: "/cards/39-dilution.png" },
-    { id: 40, name: "fundraise", image: "/cards/40-fundraise.png" },
+    { id: 1, name: "mvp", image: "/loteria-cards/01-mvp.png" },
+    { id: 2, name: "pivot", image: "/loteria-cards/02-pivot.png" },
+    { id: 3, name: "burnrate", image: "/loteria-cards/03-burnrate.png" },
+    { id: 4, name: "angel-r", image: "/loteria-cards/04-angel-r.png" },
+    { id: 5, name: "seed-round", image: "/loteria-cards/05-seed-round.png" },
+    { id: 6, name: "pitch", image: "/loteria-cards/06-pitch.png" },
+    { id: 7, name: "unicorn", image: "/loteria-cards/07-unicorn.png" },
+    { id: 8, name: "founder", image: "/loteria-cards/08-founder.png" },
+    { id: 9, name: "due-diligence", image: "/loteria-cards/09-due-diligence.png" },
+    { id: 10, name: "valuation", image: "/loteria-cards/10-valuation.png" },
+    { id: 11, name: "exit", image: "/loteria-cards/11-exit.png" },
+    { id: 12, name: "pitch-deck", image: "/loteria-cards/12-pitch-deck.png" },
+    { id: 13, name: "venture-partner", image: "/loteria-cards/13-venture-partner.png" },
+    { id: 14, name: "accelerator", image: "/loteria-cards/14-accelerator.png" },
+    { id: 15, name: "bootstrapped", image: "/loteria-cards/15-bootstrapped.png" },
+    { id: 16, name: "elevator-pitch", image: "/loteria-cards/16-elevator-pitch.png" },
+    { id: 17, name: "network", image: "/loteria-cards/17-network.png" },
+    { id: 18, name: "ipo", image: "/loteria-cards/18-ipo.png" },
+    { id: 19, name: "cto", image: "/loteria-cards/19-cto.png" },
+    { id: 20, name: "ceo", image: "/loteria-cards/20-ceo.png" },
+    { id: 21, name: "cfo", image: "/loteria-cards/21-cfo.png" },
+    { id: 22, name: "ecosistema", image: "/loteria-cards/22-ecosistema.png" },
+    { id: 23, name: "captable", image: "/loteria-cards/23-captable.png" },
+    { id: 24, name: "limited-partner", image: "/loteria-cards/24-limited-partner.png" },
+    { id: 25, name: "value-prop", image: "/loteria-cards/25-value-prop.png" },
+    { id: 26, name: "tam", image: "/loteria-cards/26-tam.png" },
+    { id: 27, name: "aquihire", image: "/loteria-cards/27-aquihire.png" },
+    { id: 28, name: "dpi", image: "/loteria-cards/28-dpi.png" },
+    { id: 29, name: "mentor", image: "/loteria-cards/29-mentor.png" },
+    { id: 30, name: "runway", image: "/loteria-cards/30-runway.png" },
+    { id: 31, name: "moonshot", image: "/loteria-cards/31-moonshot.png" },
+    { id: 32, name: "hockey-stick", image: "/loteria-cards/32-hockey-stick.png" },
+    { id: 33, name: "bubble", image: "/loteria-cards/33-bubble.png" },
+    { id: 34, name: "AI", image: "/loteria-cards/34-AI.png" },
+    { id: 35, name: "blockchain", image: "/loteria-cards/35-blockchain.png" },
+    { id: 36, name: "pay2play", image: "/loteria-cards/36-pay2play-.png" },
+    { id: 37, name: "term-sheet", image: "/loteria-cards/37-term-sheet.png" },
+    { id: 38, name: "safe-note", image: "/loteria-cards/38-safe-note.png" },
+    { id: 39, name: "dilution", image: "/loteria-cards/39-dilution.png" },
+    { id: 40, name: "fundraise", image: "/loteria-cards/40-fundraise.png" },
   ];
   return cards;
 };
@@ -231,10 +235,11 @@ onMounted(() => {
   overflow: hidden;
   position: relative;
   max-width: 360px;
+  user-select: none;
 }
 
 .card-back {
-  background-image: url('/cards/00-cover.png');
+  background-image: url('/loteria-cards/00-cover.png');
   background-size: 30px 30px;
   display: flex;
   align-items: center;
